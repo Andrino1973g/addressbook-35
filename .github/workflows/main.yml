@@ -1,0 +1,41 @@
+---
+- name: Install a package on specified hosts
+  hosts: "{{ host_group }}"
+  become: yes
+  vars_prompt:
+    - name: "host_group"
+      prompt: "Enter the group of hosts"
+      private: no
+    - name: "package_name"
+      prompt: "Enter the name of the package to be installed"
+      private: no
+
+  tasks:
+    - name: Install the specified package
+      ansible.builtin.yum:
+        name: "{{ package_name }}"
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Install the specified package
+      ansible.builtin.apt:
+        name: "{{ package_name }}"
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Install the specified package on Arch Linux
+      ansible.builtin.pacman:
+        name: "{{ package_name }}"
+        state: present
+      when: ansible_os_family == "Archlinux"
+
+    - name: Install the specified package on SUSE
+      ansible.builtin.zypper:
+        name: "{{ package_name }}"
+        state: present
+      when: ansible_os_family == "Suse"
+
+
+
+ansible-playbook install_package.yml
+
